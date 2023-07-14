@@ -10,11 +10,17 @@
     "@types/node": "^16.18.38",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "@walletconnect/sign-client": "^2.1.4",
+    "@web3modal/ethereum": "^2.7.0",
+    "@web3modal/react": "^2.7.0",
+    "@web3modal/standalone": "^2.0.0-beta.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+    "viem": "^1.2.15",
+    "web-vitals": "^2.1.4",
+    "xrpl": "^2.9.0"
   },
   "scripts": {
     "start": "react-scripts start",

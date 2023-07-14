@@ -1,0 +1,5 @@
+{
+    "conventionalCommits.scopes": [
+        "App generate qrcode for walletconnect"
+    ]
+}
