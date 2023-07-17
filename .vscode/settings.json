@@ -1,5 +1,8 @@
 {
     "conventionalCommits.scopes": [
         "App generate qrcode for walletconnect"
+    ],
+    "cSpell.words": [
+        "WALLETCONNECTSUPPORTEDMETHOD"
     ]
 }

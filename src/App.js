@@ -1,8 +1,22 @@
+import {XRPLKit, EsupportedNewtworks, EsupportedWallet } from "./Kit/kit";
+import { Networks } from "./utils/inteface";
+// async function App() {
+
+//   const kit = new XRPLKit(EsupportedWallet.WALLETCONNECT, Networks.DEVNET)
+  
+// const kitValue = await kit.startWalletConnect()
+// console.log("value that needs to be open ", kitValue.uri)
+// console.log("value that approval ", kitValue.approval)
+//   }
+
+  
+// export default App;
+
 import { useEffect, useState } from "react";
 import { SignClient } from "@walletconnect/sign-client";
 import { Web3Modal } from "@web3modal/standalone";
-// import "./App.css";
 import "../src/modal/App.css"
+
 
 
 const projectId = '88bee4f36f4af99034b9c53c4d64c4a8'
@@ -15,17 +29,18 @@ const web3Modal = new Web3Modal({
 
 function App() {
   const [signClient, setSignClient] = useState();
-
+  const [kit, setKit ] = useState()
   const [sessions, setSessions] = useState([]);
   const [accounts, setAccounts] = useState([]);
   const [txnHash, setTxnHash] = useState();
 
   async function createClient() {
     try {
-      const client = await SignClient.init({
-        projectId: projectId,
-      });
+      const kit = new XRPLKit(EsupportedWallet.WALLETCONNECT, Networks.TESTNET)
+      const client = await kit.connectKitToWallet(projectId)
+
       setSignClient(client);
+      setKit(kit)
       await subscribeToEvents(client);
     } catch (e) {
       console.log(e);
@@ -35,23 +50,12 @@ function App() {
   async function handleConnect() {
     if (!signClient) throw Error("Cannot connect. Sign Client is not created");
     try {
-      // dapp is going to send a proposal namespace
-      const proposalNamespace = {
-        xrpl: {
-          chains: ["xrpl:1"],
-          methods: ["xrpl_signTransaction", 'xrpl_signTransactionFor'],
-          events: ["connect", "disconnect"],
-        },
-      };
-
-      const { uri, approval } = await signClient.connect({
-        requiredNamespaces: proposalNamespace,
-      });
-
+      let uri = signClient.uri
+      
+      console.log("this is the uri     ", uri)
       if (uri) {
-        console.log("this is the url ", uri)
         web3Modal.openModal({ uri });
-        const sessionNamespace = await approval();
+        const sessionNamespace = await signClient.approval();
         onSessionConnect(sessionNamespace);
         web3Modal.closeModal();
       }
@@ -61,10 +65,11 @@ function App() {
   }
 
   async function onSessionConnect(session) {
+    console.log("this is the session ", session.namespaces.xrpl.accounts[0])
     if (!session) throw Error("session doesn't exist");
     try {
       setSessions(session);
-      setAccounts(session.namespaces.eip155.accounts[0].slice(9));
+      setAccounts(session.namespaces.xrpl.accounts[0].slice(7));
     } catch (e) {
       console.log(e);
     }
@@ -100,22 +105,58 @@ function App() {
   async function handleSend() {
     try {
       const tx = {
-        from: accounts,
-        to: "0xBDE1EAE59cE082505bB73fedBa56252b1b9C60Ce",
-        data: "0x",
-        gasPrice: "0x029104e28c",
-        gasLimit: "0x5208",
-        value: "0x00",
-      };
-      const result = await signClient.request({
+        
+            "tx_json": {
+                "TransactionType": "Payment",
+                "Account": accounts,
+                "Destination":"rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+                "Amount": '100000000'
+            
+        }
+      }
+
+      const trans ={
         topic: sessions.topic,
-        request: {
-          method: "eth_sendTransaction",
+          request: {
+          "id": 1,
+          "jsonrpc": "2.0",
+          "method": "xrpl_signTransactionFor",
+          "autofill":true,
+          "submit":true,
           params: [tx]
-        },
-        chainId: "eip155:5"
-      })
-      setTxnHash(result)
+        }
+
+
+      } 
+      
+      // console.log("this destination address ", tx.Destination)
+    
+      const result = await kit.signTransaction(trans)
+      console.log("report of the signed tx  --  ", result)
+      
+      
+      
+      // await signClient.request({
+      //   topic: sessions.topic,
+      //   request: {
+      //     "id": 1,
+      //     "jsonrpc": "2.0",
+      //     "method": "xrpl_signTransaction",
+      //     "autofill":true,
+      //     "submit":true,
+      //     params: [tx]
+      //   },
+      //   chainId: "xrpl:1"
+      // })
+      console.log("this is the transaction details ", result)
+      console.log("this is the transaction details ", result.result.tx_json)
+      console.log("this is the transaction details ", result.result.tx_json.transaction)
+      console.log("this is the transaction details ", result.result.tx_json.transaction.result)
+      console.log("this is the transaction details ", result.result.tx_json.transaction.result.hash)
+      // console.log("this is the transaction details ", result.tx_json.transaction)
+      // console.log("this is the transaction details ", result.tx_json.transaction.hash)
+      setTxnHash(result.result.tx_json.transaction.result.hash)
+
     } catch (e) {
       console.log(e);
     }
@@ -140,7 +181,7 @@ function App() {
           <p>{accounts}</p>
           <button onClick={handleDisconnect}>Disconnect</button>
           <button onClick={handleSend}>Send</button>
-          { txnHash && <p>View your transaction <a href={`https://goerli.etherscan.io/tx/${txnHash}`} target="_blank" rel="noreferrer">here</a>!</p>}
+          { txnHash && <p>View your transaction <a href={`https://testnet.xrpl.org/transactions/${txnHash}`} target="_blank" rel="noreferrer">here</a>!</p>}
         </>
       ) : (
         <button onClick={handleConnect} disabled={!signClient}>
