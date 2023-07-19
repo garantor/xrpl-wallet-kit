@@ -21,6 +21,7 @@
     "jsx": "react-jsx"
   },
   "include": [
-    "src/"
-  ]
+    "src",
+    "src/modal"
+, "tailwind.config.js", "src/index.tsx", "src/App.js"  ]
 }
