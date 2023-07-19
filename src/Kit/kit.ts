@@ -1,8 +1,9 @@
-import { createWalletConnectClient, signWalletConnectTx } from "./WalletConnect/walletconnect";
+import { walletConnectInit, signWalletConnectTx } from "./WalletConnect/walletconnect";
 import * as XRPL from 'xrpl'
 import { Networks, EsupportedNewtworks, EwalletConnectSupportedMethod } from "../utils/inteface";
 import { xummInit, signedXummTransaction } from './XummWallet/xumm'
 import { Xumm } from "xumm";
+import { gemWalletInit } from "./GemWallet/gemWallet";
 import { EsupportedWallet } from "../utils/Enums";
 
 export class XRPLKit {
@@ -56,11 +57,28 @@ export class XRPLKit {
     this.selectedWallet = wallet;
   }
 
+  async walletConnectHandShake(projectId: string) {
+    const userSelectedNetwork = EsupportedNewtworks[this.network as unknown as keyof typeof EsupportedNewtworks]
+    let initializeWalletConnect = await walletConnectInit(projectId!)
+    const proposalNamespace = {
+      xrpl: {
+        chains: [userSelectedNetwork.walletconnectId],
+        methods: [EwalletConnectSupportedMethod.SINGLE_SIGN, EwalletConnectSupportedMethod.MULTI_SIG_SIGN],
+        events: ["connect", "disconnect"],
+      }
+    }
+    let initializeWCInstance = await initializeWalletConnect.connect({
+      requiredNamespaces: proposalNamespace
+    })
+    this.Client = initializeWalletConnect
+    return initializeWCInstance
+
+  }
+
   public async connectKitToWallet(projectId?: string, apiKey?: string) {
     // connectKitToWallet is how you initially connect to a specific wallet
     // project id can be any number or string, make sure it valid when connecting to wallet connect
     // projectId is only for walletconnect
-    let network = this.network
     let useWallet = this.selectedWallet
     switch (useWallet) {
       case EsupportedWallet.XUMM:
@@ -69,23 +87,10 @@ export class XRPLKit {
         return this.XummInstance
       case EsupportedWallet.GEM:
         //handle gem connect here
-        return;
+        return await gemWalletInit()
       case EsupportedWallet.WALLETCONNECT:
         //walletconnect login here
-        const userSelectedNetwork = EsupportedNewtworks[network as unknown as keyof typeof EsupportedNewtworks]
-        let initializeWalletConnect = await createWalletConnectClient(projectId!)
-        const proposalNamespace = {
-          xrpl: {
-            chains: [userSelectedNetwork.walletconnectId],
-            methods: [EwalletConnectSupportedMethod.SINGLE_SIGN, EwalletConnectSupportedMethod.MULTI_SIG_SIGN],
-            events: ["connect", "disconnect"],
-          }
-        }
-        let initializeWCInstance = await initializeWalletConnect.connect({
-          requiredNamespaces: proposalNamespace
-        })
-        this.Client = initializeWalletConnect
-        return initializeWCInstance
+        return await this.walletConnectHandShake(projectId!)
 
 
 

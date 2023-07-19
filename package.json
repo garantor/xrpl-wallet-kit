@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@gemwallet/api": "^3.3.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -15,6 +16,7 @@
     "@web3modal/ethereum": "^2.7.0",
     "@web3modal/react": "^2.7.0",
     "@web3modal/standalone": "^2.0.0-beta.7",
+    "add": "^2.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
@@ -23,7 +25,8 @@
     "viem": "^1.2.15",
     "web-vitals": "^2.1.4",
     "xrpl": "^2.9.0",
-    "xumm": "^1.5.4"
+    "xumm": "^1.5.4",
+    "yarn": "^1.22.19"
   },
   "scripts": {
     "start": "react-scripts start",

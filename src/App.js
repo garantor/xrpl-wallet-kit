@@ -197,118 +197,139 @@
 
 
 
-import { useState } from 'react'
-import './modal/App.css'
-// import {Xumm} from 'xumm'
-import {XRPLKit} from './Kit/kit'
-import { Xumm } from 'xumm';
+// import { useState } from 'react'
+// import './modal/App.css'
+// // import {Xumm} from 'xumm'
+// import {XRPLKit} from './Kit/kit'
+// import { Xumm } from 'xumm';
 
-// secret - 'ffc2eda3-16e1-439a-88ec-eab56f0c3568'
+// // secret - 'ffc2eda3-16e1-439a-88ec-eab56f0c3568'
 
-// const xumm = new Xumm('your-api-key-uuid') // Some API Key
-// var xumm = new Xumm('ec787b10-c276-429e-b45f-c309ecb6c8cc');
+// // const xumm = new Xumm('your-api-key-uuid') // Some API Key
+// // var xumm = new Xumm('ec787b10-c276-429e-b45f-c309ecb6c8cc');
 
-let kit = new XRPLKit("XUMM", "TESTNET")
-let xumm;
-const main = async () => {
-  xumm = await kit.connectKitToWallet(null, "ec787b10-c276-429e-b45f-c309ecb6c8cc")
-  return xumm
+// let kit = new XRPLKit("XUMM", "TESTNET")
+// let xumm;
+// const main = async () => {
+//   xumm = await kit.connectKitToWallet(null, "ec787b10-c276-429e-b45f-c309ecb6c8cc")
+//   return xumm
 
-}
-console.log("this is the xumm ", xumm)
-
-
-main()
+// }
+// console.log("this is the xumm ", xumm)
 
 
-function App() {
-  const [account, setAccount] = useState('')
-  const [payloadUuid, setPayloadUuid] = useState('')
-  const [lastPayloadUpdate, setLastPayloadUpdate] = useState('')
-  const [openPayloadUrl, setOpenPayloadUrl] = useState('')
-  const [appName, setAppName] = useState('')
+// main()
 
-  xumm.user.account.then(a => setAccount(a ?? ''))
-  xumm.environment.jwt?.then(j => setAppName(j?.app_name ?? ''))
 
-  const logout = () => {
-    xumm.logout()
-    setAccount('')
-  }
+// function App() {
+//   const [account, setAccount] = useState('')
+//   const [payloadUuid, setPayloadUuid] = useState('')
+//   const [lastPayloadUpdate, setLastPayloadUpdate] = useState('')
+//   const [openPayloadUrl, setOpenPayloadUrl] = useState('')
+//   const [appName, setAppName] = useState('')
+
+//   xumm.user.account.then(a => setAccount(a ?? ''))
+//   xumm.environment.jwt?.then(j => setAppName(j?.app_name ?? ''))
+
+//   const logout = () => {
+//     xumm.logout()
+//     setAccount('')
+//   }
 
   
 
-  const createPayload = async () => {
-    const payload = await kit.signTransaction({
-      TransactionType: 'Payment',
-      Destination: 'rp4ckk1TFJSkxgzSSMcForzhx9LnStp8wQ',
-      Account: account,
-      Amount: String(1337),
-    }, event => {
-      // Return if signed or not signed (rejected)
-      setLastPayloadUpdate(JSON.stringify(event.data, null, 2))
-      console.log("this is the data ", event)
+//   const createPayload = async () => {
+//     const payload = await kit.signTransaction({
+//       TransactionType: 'Payment',
+//       Destination: 'rp4ckk1TFJSkxgzSSMcForzhx9LnStp8wQ',
+//       Account: account,
+//       Amount: String(1337),
+//     }, event => {
+//       // Return if signed or not signed (rejected)
+//       setLastPayloadUpdate(JSON.stringify(event.data, null, 2))
+//       console.log("this is the data ", event)
 
-      // Only return (websocket will live till non void)
-      if (Object.keys(event.data).indexOf('signed') > -1) {
-        return true
-      }
-    })
-    console.log('this is the payload -- ', payload)
-    const windowFeatures = 'width=500,height=400,scrollbars=yes,resizable=yes';
+//       // Only return (websocket will live till non void)
+//       if (Object.keys(event.data).indexOf('signed') > -1) {
+//         return true
+//       }
+//     })
+//     console.log('this is the payload -- ', payload)
+//     const windowFeatures = 'width=500,height=400,scrollbars=yes,resizable=yes';
 
 
 
-    if (payload) {
-      setPayloadUuid(payload.created.uuid)
+//     if (payload) {
+//       setPayloadUuid(payload.created.uuid)
 
-      if (xumm.runtime.xapp) {
-        xumm.xapp?.openSignRequest(payload.created)
-      } else {
-        if (payload.created.pushed && payload.created.next?.no_push_msg_received) {
-          setOpenPayloadUrl(payload.created.next.always)
-        } else {
-          window.open(payload.created.next.always, '_blank', windowFeatures)
-        }
-      }
-    }
+//       if (xumm.runtime.xapp) {
+//         xumm.xapp?.openSignRequest(payload.created)
+//       } else {
+//         if (payload.created.pushed && payload.created.next?.no_push_msg_received) {
+//           setOpenPayloadUrl(payload.created.next.always)
+//         } else {
+//           window.open(payload.created.next.always, '_blank', windowFeatures)
+//         }
+//       }
+//     }
 
-    return payload
+//     return payload
+//   }
+
+//   return (
+//     <div className="App">
+//       <h2>{ appName }</h2>
+//       <div>
+//         Hi <b>{ account }</b>
+//       </div>
+//       {
+//         account === '' && !xumm.runtime.xapp
+//           ? <button onClick={xumm.authorize}>Sign in</button>
+//           : ''
+//       }
+//       {
+//         account !== ''
+//           ? <>
+//               <button onClick={createPayload}>Make a payment</button>
+//               &nbsp;- or -&nbsp;
+//               <button onClick={logout}>Sign Out</button>
+//             </>
+//           : ''
+//       }
+//       <br />
+//       <br />
+//       <code>{payloadUuid}</code>
+//       {
+//         payloadUuid
+//           ? openPayloadUrl !== ''
+//             ? <b><br /><a href={openPayloadUrl} target="_blank">Payload Pushed, no push received? Open Payload...</a></b>
+//             : 'Payload pushed'
+//           : ''
+//       }
+//       <pre>{ lastPayloadUpdate }</pre>
+//     </div>
+//   )
+// }
+
+// export default App
+
+
+import { XRPLKit } from "./Kit/kit";
+import { EsupportedWallet } from "./utils/Enums";
+import { EsupportedNewtworks } from "./utils/inteface";
+
+function App(){
+
+  async function signIn(){
+    const connect = new XRPLKit(EsupportedWallet.GEM, "DEVNET")
+    console.log(await connect.connectKitToWallet())
+
   }
 
-  return (
-    <div className="App">
-      <h2>{ appName }</h2>
-      <div>
-        Hi <b>{ account }</b>
-      </div>
-      {
-        account === '' && !xumm.runtime.xapp
-          ? <button onClick={xumm.authorize}>Sign in</button>
-          : ''
-      }
-      {
-        account !== ''
-          ? <>
-              <button onClick={createPayload}>Make a payment</button>
-              &nbsp;- or -&nbsp;
-              <button onClick={logout}>Sign Out</button>
-            </>
-          : ''
-      }
-      <br />
-      <br />
-      <code>{payloadUuid}</code>
-      {
-        payloadUuid
-          ? openPayloadUrl !== ''
-            ? <b><br /><a href={openPayloadUrl} target="_blank">Payload Pushed, no push received? Open Payload...</a></b>
-            : 'Payload pushed'
-          : ''
-      }
-      <pre>{ lastPayloadUpdate }</pre>
-    </div>
-  )
+  return <div className="App">
+    <h1>this is just a test</h1>
+    <button onClick={signIn}> Sign in</button>
+  </div>
 }
 
-export default App
+export default App;
