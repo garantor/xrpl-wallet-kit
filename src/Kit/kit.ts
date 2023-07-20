@@ -1,10 +1,10 @@
 import { walletConnectInit, signWalletConnectTx } from "./WalletConnect/walletconnect";
 import * as XRPL from 'xrpl'
-import { Networks, EsupportedNewtworks, EwalletConnectSupportedMethod } from "../utils/inteface";
+import { Networks, EsupportedNewtworks, EwalletConnectSupportedMethod } from "./utils/inteface";
 import { xummInit, signedXummTransaction } from './XummWallet/xumm'
 import { Xumm } from "xumm";
 import { gemWalletInit } from "./GemWallet/gemWallet";
-import { EsupportedWallet } from "../utils/Enums";
+import { EsupportedWallet } from "./utils/Enums";
 
 export class XRPLKit {
   private selectedWallet!: EsupportedWallet;

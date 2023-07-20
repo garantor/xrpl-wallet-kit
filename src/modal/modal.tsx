@@ -11,8 +11,9 @@ import {
     Text
   } from "@chakra-ui/react";
   import { Image } from "@chakra-ui/react";
+
   
-  export default function SelectWalletModal({ isOpen, closeModal }: {isOpen:boolean, closeModal:any}) {
+  export default function SelectWalletModal({ isOpen, closeModal, onClicked }: {isOpen:boolean, closeModal:any, onClicked:any}) {
   
     return (
       <Modal isOpen={isOpen} onClose={closeModal} isCentered>
@@ -28,9 +29,8 @@ import {
             <VStack>
               <Button
                 variant="outline"
-                onClick={() => {
-                  console.log("Coinbase has been clicked ");
-                }}
+                onClick={onClicked}
+
                 w="100%"
               >
                 <HStack w="100%" justifyContent="center">
@@ -46,9 +46,7 @@ import {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => {
-                    console.log("Coinbase has been clicked ")
-                }}
+                onClick={onClicked}
                 w="100%"
               >
                 <HStack w="100%" justifyContent="center">
@@ -64,9 +62,8 @@ import {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => {
-                    console.log("Coinbase has been clicked ")
-                }}
+                onClick={onClicked}
+
                 w="100%"
               >
                 <HStack w="100%" justifyContent="center">
