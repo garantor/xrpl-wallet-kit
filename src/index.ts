@@ -1,10 +1,13 @@
-import { walletConnectInit, signWalletConnectTx } from "./WalletConnect/walletconnect";
 import * as XRPL from 'xrpl'
-import { Networks, EsupportedNewtworks, EwalletConnectSupportedMethod } from "./utils/inteface";
-import { xummInit, signedXummTransaction } from './XummWallet/xumm'
 import { Xumm } from "xumm";
-import { gemWalletInit } from "./GemWallet/gemWallet";
-import { EsupportedWallet } from "./utils/Enums";
+import { gemWalletInit } from "./gemWallet";
+import { EsupportedWallet } from "./Enums";
+import { walletConnectInit, signWalletConnectTx } from "./walletconnect";
+import { Networks, EsupportedNewtworks, EwalletConnectSupportedMethod } from "./interface";
+import { xummInit, signedXummTransaction } from './xumm'
+
+
+
 
 export class XRPLKit {
   private selectedWallet!: EsupportedWallet;
@@ -28,8 +31,8 @@ export class XRPLKit {
 
     const result = {
       client: this.Client,
-      topic: transaction.topic as string,
-      request: transaction.request,
+      topic: transaction['topic'] as string,
+      request: transaction['request'],
       chainId: selectedNetwork.walletconnectId
     }
     return await signWalletConnectTx(result)
@@ -115,3 +118,4 @@ export class XRPLKit {
 
   }
 } 
+

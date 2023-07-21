@@ -1,7 +1,5 @@
 import { Xumm } from "xumm";
 
-
-
 export async function xummInit(apiKey: string) {
     let xumm = new Xumm(apiKey)
     return xumm

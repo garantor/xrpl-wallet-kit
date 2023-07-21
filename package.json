@@ -1,16 +1,31 @@
 {
-  "name": "xrpl-wallet-kit2",
-  "version": "0.1.1",
+  "name": "xrpl-wallet-kit",
+  "version": "0.1.12",
+  "main": "dist/index.js",
+  "source": "src/index.ts",
+  "umd:main": "dist/index.umd.js",
+  "module": "dist/index.mjs", 
+  "exports": {
+    "types": "./dist/index.d.ts",        
+    "require": "./dist/index.js",        
+    "default": "./dist/index.modern.mjs"
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
   "dependencies": {
     "@gemwallet/api": "^3.3.0",
-    "react-scripts": "^5.0.1",
+    "@walletconnect/sign-client": "^2.9.0",
+    "@walletconnect/types": "^2.9.0",
+    "react-scripts": "4.0.3",
     "xrpl": "^2.9.1",
     "xumm": "^1.5.4",
     "yarn": "^1.22.19"
   },
   "scripts": {
     "start": "PORT=3111 react-scripts start",
-    "build": "react-scripts build",
+    "build": "tsc",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -31,5 +46,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "microbundle": "^0.15.1"
   }
 }
