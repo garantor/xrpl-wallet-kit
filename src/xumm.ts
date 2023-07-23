@@ -1,8 +1,11 @@
 import { Xumm } from "xumm";
 
 export async function xummInit(apiKey: string) {
-    let xumm = new Xumm(apiKey)
-    return xumm
+    console.log('this is the key ', apiKey)
+    let xummClient = new Xumm(apiKey)
+    let activeSession = await xummClient.authorize()
+    console.log(activeSession)
+    return { xummClient, activeSession }
 }
 
 export async function signedXummTransaction(xummInstance: Xumm, transaction: any) {
@@ -10,5 +13,10 @@ export async function signedXummTransaction(xummInstance: Xumm, transaction: any
     let signTx = await xummInstance.payload?.createAndSubscribe(transaction)
     console.log(signTx)
     return signTx
+}
+
+
+export async function xummDisconnect(xummInstance: Xumm){
+    return await xummInstance.logout()
 }
 

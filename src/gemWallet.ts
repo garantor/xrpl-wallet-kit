@@ -1,9 +1,8 @@
 import * as GemWallet from '@gemwallet/api'
-import { Networks } from './interface'
 export interface WalletInitResponse {
     isInstalled: boolean,
     publicKey?: string,
-    currentNetwork?: Networks
+    currentNetwork?: any
 }
 
 

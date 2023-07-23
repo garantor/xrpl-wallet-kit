@@ -1,19 +1,51 @@
-import * as XRPL from 'xrpl'
 import { Xumm } from "xumm";
 import { gemWalletInit } from "./gemWallet";
-import { EsupportedWallet } from "./Enums";
-import { walletConnectInit, signWalletConnectTx } from "./walletconnect";
-import { Networks, EsupportedNewtworks, EwalletConnectSupportedMethod } from "./interface";
-import { xummInit, signedXummTransaction } from './xumm'
+import { walletConnectInit, signWalletConnectTx, walletConnectDisconnect } from "./walletconnect";
+import { xummInit, signedXummTransaction, xummDisconnect } from './xumm'
 
 
+export enum Networks {
+  MAINNET = "MAINNET",
+  TESTNET = "TESTNET",
+  DEVNET = "DEVNET",
+  AMM = "AMM"
+}
 
+
+export enum EsupportedWallet {
+  XUMM = "XUMM",
+  GEM = "GEMWallet",
+  WALLETCONNECT = "WalletConnect"
+}
+
+export const EsupportedNewtworks = {
+  MAINNET: {
+    name: "Mainnet",
+    networkWss: "wss://xrplcluster.com",
+    walletconnectId: 'xrpl:0',
+    rpc: "https://xrplcluster.com"
+  },
+  TESTNET: {
+    name: "Testnet",
+    networkWss: "wss://s.altnet.rippletest.net/",
+    walletconnectId: 'xrpl:1',
+    rpc: "https://testnet.xrpl-labs.com"
+  },
+
+  DEVNET: {
+    name: "Devnet",
+    networkWss: "wss://s.devnet.rippletest.net:51233/",
+    walletconnectId: 'xrpl:2',
+    rpc: "https://s.devnet.rippletest.net:51234/"
+
+  }
+}
 
 export class XRPLKit {
   private selectedWallet!: EsupportedWallet;
   private network!: Networks;
   private Client: any
-  private XummInstance!: Xumm;
+  private Session!: any;
 
   // general way to initialize wallet
   constructor(
@@ -23,22 +55,6 @@ export class XRPLKit {
     this.addWallet(selectedWallet);
     this.addNetwork(network);
   }
-
-
-  //sign wallet connect tx
-  private async signWalletConnectTx(transaction: XRPL.TxRequest) {
-    const selectedNetwork = EsupportedNewtworks[this.network as unknown as keyof typeof EsupportedNewtworks]
-
-    const result = {
-      client: this.Client,
-      topic: transaction['topic'] as string,
-      request: transaction['request'],
-      chainId: selectedNetwork.walletconnectId
-    }
-    return await signWalletConnectTx(result)
-
-  }
-
 
   public addNetwork(network: Networks): void {
     const supportedNetworks = Object.values(Networks);
@@ -50,7 +66,6 @@ export class XRPLKit {
     this.network = network;
   }
 
-
   public addWallet(wallet: EsupportedWallet): void {
     const supportedWallet = Object.values(EsupportedWallet);
     if (!supportedWallet.includes(wallet)) {
@@ -60,62 +75,77 @@ export class XRPLKit {
     this.selectedWallet = wallet;
   }
 
-  async walletConnectHandShake(projectId: string) {
-    const userSelectedNetwork = EsupportedNewtworks[this.network as unknown as keyof typeof EsupportedNewtworks]
-    let initializeWalletConnect = await walletConnectInit(projectId!)
-    const proposalNamespace = {
-      xrpl: {
-        chains: [userSelectedNetwork.walletconnectId],
-        methods: [EwalletConnectSupportedMethod.SINGLE_SIGN, EwalletConnectSupportedMethod.MULTI_SIG_SIGN],
-        events: ["connect", "disconnect"],
-      }
-    }
-    let initializeWCInstance = await initializeWalletConnect.connect({
-      requiredNamespaces: proposalNamespace
-    })
-    this.Client = initializeWalletConnect
-    return initializeWCInstance
-
-  }
-
   public async connectKitToWallet(projectId?: string, apiKey?: string) {
     // connectKitToWallet is how you initially connect to a specific wallet
     // project id can be any number or string, make sure it valid when connecting to wallet connect
     // projectId is only for walletconnect
+    // this is where we should set the network
     let useWallet = this.selectedWallet
+    const selectedNetwork = EsupportedNewtworks[this.network as unknown as keyof typeof EsupportedNewtworks]
+
+
     switch (useWallet) {
       case EsupportedWallet.XUMM:
         //handle xumm connect here
-        this.XummInstance = await xummInit(apiKey!)
-        return this.XummInstance
+        let response = await xummInit(apiKey!)
+        this.Session = response.activeSession
+        this.Client = response.xummClient
+        return response
       case EsupportedWallet.GEM:
         //handle gem connect here
         return await gemWalletInit()
       case EsupportedWallet.WALLETCONNECT:
         //walletconnect login here
-        return await this.walletConnectHandShake(projectId!)
-
-
-
-
+        console.log('inside wallet connect ')
+        let session = await walletConnectInit(projectId!, selectedNetwork)
+        this.Session = session?.activeSession
+        this.Client = session?.client
+        return session
       default:
         throw new Error("the wallet type you selected is not supported ")
 
     }
   }
-  public async signTransaction(transaction: XRPL.TxRequest) {
+  public async signTransaction(transaction: any) {
     let walletType = this.selectedWallet
     switch (walletType) {
       case EsupportedWallet.WALLETCONNECT:
-        return this.signWalletConnectTx(transaction)
+        return await signWalletConnectTx(transaction)
 
       case EsupportedWallet.XUMM:
-        return await signedXummTransaction(this.XummInstance, transaction)
+        return await signedXummTransaction(this.Session, transaction)
 
       default:
         throw new Error("the wallet type you selected is not supported ")
     }
+  }
+
+
+  //static function that open the list of wallets
+  public async disconnect() {
+    switch (this.selectedWallet) {
+      case EsupportedWallet.WALLETCONNECT:
+        return await walletConnectDisconnect(this.Client)
+      case EsupportedWallet.XUMM:
+        return await xummDisconnect(this.Client)
+      case EsupportedWallet.GEM:
+        //sGemwallet does not provide an api for logout
+        return;
+
+        break;
+
+      default:
+        break;
+    }
+    // this open the modal with the list of wallets supported by the kit
+
 
   }
-} 
+
+  public async getSelectedWallet() {
+    return this.selectedWallet
+  }
+
+
+}
 
