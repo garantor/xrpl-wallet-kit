@@ -1,38 +1,36 @@
 {
-  "name": "xrpl-wallet-kit2",
-  "version": "0.1.0",
-  "private": true,
+  "name": "xrpl-wallet-kit",
+  "version": "0.1.16",
+  "main": "dist/index.js",
+  "source": "src/index.ts",
+  "umd:main": "dist/index.umd.js",
+  "module": "dist/index.mjs",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "require": "./dist/index.js",
+    "default": "./dist/index.modern.mjs"
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
   "dependencies": {
     "@gemwallet/api": "^3.3.0",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.38",
-    "@types/react": "^18.2.15",
-    "@types/react-dom": "^18.2.7",
-    "@walletconnect/sign-client": "^2.1.4",
-    "@walletconnect/web3wallet": "^1.8.6",
-    "@web3modal/ethereum": "^2.7.0",
-    "@web3modal/react": "^2.7.0",
-    "@web3modal/standalone": "^2.0.0-beta.7",
-    "add": "^2.0.6",
-    "react": "^18.2.0",
+    "@walletconnect/sign-client": "^2.9.0",
+    "@walletconnect/types": "^2.9.0",
+    "@web3modal/standalone": "^2.4.3",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "timers": "^0.1.1",
-    "typescript": "^4.9.5",
-    "viem": "^1.2.15",
-    "web-vitals": "^2.1.4",
-    "xrpl": "^2.9.0",
+    "xrpl": "^2.9.1",
     "xumm": "^1.5.4",
     "yarn": "^1.22.19"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "PORT=3111 react-scripts start",
+    "build": "tsc",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "publish": "npx microbundle && npm publish",
+    "dev": "microbundle watch"
   },
   "eslintConfig": {
     "extends": [
@@ -51,5 +49,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-dom": "^18.2.7",
+    "microbundle": "^0.15.1"
   }
 }
