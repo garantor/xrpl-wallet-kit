@@ -1,8 +1,9 @@
-import { Xumm } from "xumm";
+
+
 import { gemWalletInit } from "./gemWallet";
 import { walletConnectInit, signWalletConnectTx, walletConnectDisconnect } from "./walletconnect";
 import { xummInit, signedXummTransaction, xummDisconnect } from './xumm'
-
+import * as XRPL from "xrpl";
 
 export enum Networks {
   MAINNET = "MAINNET",
@@ -18,7 +19,7 @@ export enum EsupportedWallet {
   WALLETCONNECT = "WalletConnect"
 }
 
-export const EsupportedNewtworks = {
+export const EsupportedNetworks = {
   MAINNET: {
     name: "Mainnet",
     networkWss: "wss://xrplcluster.com",
@@ -27,7 +28,7 @@ export const EsupportedNewtworks = {
   },
   TESTNET: {
     name: "Testnet",
-    networkWss: "wss://s.altnet.rippletest.net/",
+    networkWss: "wss://s.altnet.rippletest.net:51233/",
     walletconnectId: 'xrpl:1',
     rpc: "https://testnet.xrpl-labs.com"
   },
@@ -65,6 +66,10 @@ export class XRPLKit {
 
     this.network = network;
   }
+  public getNetwork(){
+    return Object.values(this.network);
+
+  }
 
   public addWallet(wallet: EsupportedWallet): void {
     const supportedWallet = Object.values(EsupportedWallet);
@@ -81,7 +86,7 @@ export class XRPLKit {
     // projectId is only for walletconnect
     // this is where we should set the network
     let useWallet = this.selectedWallet
-    const selectedNetwork = EsupportedNewtworks[this.network as unknown as keyof typeof EsupportedNewtworks]
+    const selectedNetwork = EsupportedNetworks[this.network as unknown as keyof typeof EsupportedNetworks]
 
 
     switch (useWallet) {
@@ -93,6 +98,10 @@ export class XRPLKit {
         return response
       case EsupportedWallet.GEM:
         //handle gem connect here
+        let gemClient = new XRPL.Client(selectedNetwork.networkWss)
+        this.Client = await gemClient.connect()
+        return ;
+
         return await gemWalletInit()
       case EsupportedWallet.WALLETCONNECT:
         //walletconnect login here
@@ -110,10 +119,19 @@ export class XRPLKit {
     let walletType = this.selectedWallet
     switch (walletType) {
       case EsupportedWallet.WALLETCONNECT:
-        return await signWalletConnectTx(transaction)
-
+      let topic = this.Session.topic
+        let formateTx = {...transaction, topic}
+        return await signWalletConnectTx(formateTx, this.Client)
+      
       case EsupportedWallet.XUMM:
-        return await signedXummTransaction(this.Session, transaction)
+        return await signedXummTransaction(this.Client, transaction)
+
+        case EsupportedWallet.GEM:
+          return;
+          //transaction can be any valid tx
+          // return await signGemTransaction(transaction, this.Client)
+
+      
 
       default:
         throw new Error("the wallet type you selected is not supported ")
@@ -129,7 +147,7 @@ export class XRPLKit {
       case EsupportedWallet.XUMM:
         return await xummDisconnect(this.Client)
       case EsupportedWallet.GEM:
-        //sGemwallet does not provide an api for logout
+        //Gem wallet does not provide an api for logout
         return;
 
         break;

@@ -1,4 +1,5 @@
-import { SignClient } from "@walletconnect/sign-client";
+
+import  SignClient  from "@walletconnect/sign-client";
 import { ISignClient } from '@walletconnect/types/dist/types/sign-client/client';
 import { Web3Modal } from '@web3modal/standalone'
 
@@ -62,8 +63,8 @@ export async function walletConnectInit(projectId: string, network: any) {
 };
 
 
-export async function signWalletConnectTx(params: IWallectConnectRequestParams) {
-  const result = await params.client.request({
+export async function signWalletConnectTx(params: IWallectConnectRequestParams, client:ISignClient) {
+  const result = await client.request({
     topic: params.topic,
     request: params.request,
     chainId: params.chainId
@@ -71,8 +72,6 @@ export async function signWalletConnectTx(params: IWallectConnectRequestParams) 
   return result
 
 }
-
-
 
 export async function walletConnectDisconnect(activeSession:any){
   try {

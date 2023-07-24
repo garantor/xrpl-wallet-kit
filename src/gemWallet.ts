@@ -1,4 +1,7 @@
-import * as GemWallet from '@gemwallet/api'
+import { isInstalled, getAddress, getNetwork, signMessage } from '@gemwallet/api'
+
+
+
 export interface WalletInitResponse {
     isInstalled: boolean,
     publicKey?: string,
@@ -8,10 +11,10 @@ export interface WalletInitResponse {
 
 export async function gemWalletInit() {
 
-    let isInstalled = await GemWallet.isInstalled()
-    if (isInstalled) {
-        let address = await GemWallet.getAddress()
-        let network = await GemWallet.getNetwork()
+    let checkInstall = await isInstalled()
+    if (checkInstall) {
+        let address = await getAddress()
+        let network = await getNetwork()
 
         let response = {
             isInstalled: isInstalled,
@@ -24,4 +27,12 @@ export async function gemWalletInit() {
 
     throw new Error("Gem Wallet not install")
 
+}
+
+
+export async function signGemTransaction(transaction:any, client:any) {
+    let signedTx =  await signMessage(transaction)
+    let submittx = client.submitAndWait(signedTx.result?.signedMessage!)
+    console.log(submittx)
+    return submittx
 }
