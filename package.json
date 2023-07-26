@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/garantor/xrpl-wallet-kit"
   },
-  "version": "0.1.21",
+  "version": "0.1.22",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "description": "",
