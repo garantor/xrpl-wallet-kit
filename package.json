@@ -1,61 +1,26 @@
 {
   "name": "xrpl-wallet-kit",
-  "version": "0.1.16",
-  "main": "dist/index.js",
-  "source": "src/index.ts",
-  "umd:main": "dist/index.umd.js",
-  "module": "dist/index.mjs",
-  "exports": {
-    "types": "./dist/index.d.ts",
-    "require": "./dist/index.js",
-    "default": "./dist/index.modern.mjs"
+  "version": "0.1.20",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "description": "",
+  "scripts": {
+    "build": "rm -rf dist/ && prettier --write src/ && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "tsc --module CommonJS --outDir dist/cjs"
   },
-  "types": "dist/index.d.ts",
   "files": [
-    "dist/"
+    "dist"
   ],
+  "author": "Afo",
+  "license": "MIT",
   "dependencies": {
     "@gemwallet/api": "^3.3.0",
-    "@walletconnect/sign-client": "^2.9.0",
-    "@walletconnect/types": "^2.9.0",
-    "@web3modal/standalone": "^2.4.3",
-    "react-dom": "^18.2.0",
-    "react-scripts": "^4.0.3",
-    "xrpl": "^2.9.1",
-    "xumm": "^1.5.4",
-    "yarn": "^1.22.19"
-  },
-  "scripts": {
-    "start": "PORT=3111 react-scripts start",
-    "build": "tsc",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "publish": "npx microbundle && npm publish",
-    "dev": "microbundle watch"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version",
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ]
-  },
-  "devDependencies": {
-    "@types/react-dom": "^18.2.7",
-    "microbundle": "^0.15.1"
+    "@ts-web3modal/standalone": "^2.4.9",
+    "@types/node": "^20.4.4",
+    "@walletconnect/sign-client": "^2.9.1",
+    "@walletconnect/types": "^2.9.1",
+    "xrpl-client": "^2.1.0",
+    "xumm": "^1.5.4"
   }
 }
