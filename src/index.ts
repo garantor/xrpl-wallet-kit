@@ -187,3 +187,8 @@ export class XRPLKit {
     ];
   }
 }
+
+
+//TODOs
+// refactor for switch cases
+// formatting transaction

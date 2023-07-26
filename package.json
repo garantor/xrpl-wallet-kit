@@ -1,6 +1,10 @@
 {
   "name": "xrpl-wallet-kit",
-  "version": "0.1.20",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/garantor/xrpl-wallet-kit"
+  },
+  "version": "0.1.21",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "description": "",
