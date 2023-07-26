@@ -95,8 +95,9 @@ const client = await client.signTransaction({
 To disconnect or logout from a wallet, simply call the disconnect method of the class.
 ```shell
 await client.disconnect()
-
 ```
+
+We will be releasing more documentation on the kit in the near future. I hope this is helpful
 
 
 
