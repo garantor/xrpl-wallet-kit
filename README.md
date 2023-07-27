@@ -1,6 +1,6 @@
 # Xrpl wallet toolkit
 
-A toolkit for interacting with all Xrpl wallets using a single, simple API. This library abstracts away the complexities of individual wallet configurations, allowing developers to focus on the UI/UX of their application.
+A toolkit for interacting with all Xrpl wallets using a single, simple API. This library abstracts away the complexities of individual wallet configurations, allowing developers to focus on the frontend of their application.
 
 The toolkit provides a unified interface for creating, accessing, and managing Xrpl transaction using wallets. The toolkit is easy to use and can be integrated into any application that needs to interact with Xrpl wallets. It is also open source, so developers can contribute to its development and make it even better.
 
