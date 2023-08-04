@@ -5,6 +5,16 @@ A toolkit for interacting with all Xrpl wallets using a single, simple API. This
 The toolkit provides a unified interface for creating, accessing, and managing Xrpl transaction using wallets. The toolkit is easy to use and can be integrated into any application that needs to interact with Xrpl wallets. It is also open source, so developers can contribute to its development and make it even better.
 
 
+
+
+Here is a short demo of the kit
+
+<video src="kit_video.mp4" controls="controls" style="max-width: 730px;">
+</video>
+
+
+
+
 ## Installation 
  ```shell
  npm i xrpl-wallet-kit
