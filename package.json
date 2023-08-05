@@ -24,6 +24,7 @@
     "@types/node": "^20.4.4",
     "@walletconnect/sign-client": "^2.9.1",
     "@walletconnect/types": "^2.9.1",
+    "xrpl": "^2.9.1",
     "xrpl-client": "^2.1.0",
     "xumm": "^1.5.4"
   }

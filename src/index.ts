@@ -152,7 +152,7 @@ export class XRPLKit {
       case EsupportedWallet.GEM:
         // return;
         //transaction can be any valid tx
-        return await signGemTransaction(transaction, this.Client);
+        return await signGemTransaction(transaction);
 
       default:
         throw new Error("the wallet type you selected is not supported ");
@@ -187,7 +187,6 @@ export class XRPLKit {
     ];
   }
 }
-
 
 //TODOs
 // refactor for switch cases
