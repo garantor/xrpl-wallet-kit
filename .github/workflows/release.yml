@@ -21,17 +21,6 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          # The `repo` scope is required to create a release.
-          token: ${{ secrets.GH_TOKEN }}
-        with:
-          tag_name: v0.1.23
-          release_name: Release v0.1.23
-
       - name: Publish to npm
         run: npm publish
         env:
