@@ -27,6 +27,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
+          token: ${{ secrets.GH_TOKEN }} 
           tag_name: v0.1.23
           release_name: Release v0.1.23
 
