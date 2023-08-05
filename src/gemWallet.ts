@@ -2,13 +2,14 @@ import {
   isInstalled,
   getAddress,
   getNetwork,
-  sendPayment,
+  // sendPayment,
   IsInstalledResponse,
   GetAddressResponse,
   GetNetworkResponse,
+  submitTransaction,
 } from "@gemwallet/api";
 
-import { XrplClient } from "xrpl-client";
+import * as XRPL from "xrpl";
 
 export interface WalletInitResponse {
   isInstalled: boolean;
@@ -37,12 +38,9 @@ export async function gemWalletInit(): Promise<{
   throw new Error("Gem Wallet not install");
 }
 
-export async function signGemTransaction(transaction: any, client: XrplClient) {
-  let signedTx = await sendPayment(transaction);
-
-  console.log(signedTx);
-  //   let submittx = await client.send({ command: "submit", tx_blob: signedTx });
-  //   client.close();
-  //   console.log(submittx);
+export async function signGemTransaction(transaction: XRPL.Transaction) {
+  let signedTx = await submitTransaction({
+    transaction: transaction,
+  });
   return signedTx;
 }

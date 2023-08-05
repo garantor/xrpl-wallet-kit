@@ -16,6 +16,8 @@ import {
 } from "@gemwallet/api";
 import { SessionTypes } from "@walletconnect/types";
 
+
+//networks types supported by the kt
 export enum Networks {
   MAINNET = "MAINNET",
   TESTNET = "TESTNET",
@@ -23,12 +25,15 @@ export enum Networks {
   AMM = "AMM",
 }
 
+//wallets supported
 export enum EsupportedWallet {
   XUMM = "XUMM",
   GEM = "GEMWallet",
   WALLETCONNECT = "WalletConnect",
 }
 
+
+//network configuration
 export const EsupportedNetworks = {
   MAINNET: {
     name: "Mainnet",
@@ -63,7 +68,9 @@ export class XRPLKit {
     this.addNetwork(network);
   }
 
+
   public addNetwork(network: Networks): void {
+    //utility method for adding and updating network
     const supportedNetworks = Object.values(Networks);
 
     if (!supportedNetworks.includes(network)) {
@@ -77,6 +84,7 @@ export class XRPLKit {
   // }
 
   public addWallet(wallet: EsupportedWallet): void {
+    //utility method for adding and updating wallet selected by users
     const supportedWallet = Object.values(EsupportedWallet);
     if (!supportedWallet.includes(wallet)) {
       throw new Error(`Wallet type "${wallet}" is not supported`);
@@ -86,6 +94,7 @@ export class XRPLKit {
   }
 
   public async connectKitToWallet(
+    //method for connecting to wallets
     projectId?: string,
     apiKey?: string,
   ): Promise<
@@ -138,21 +147,20 @@ export class XRPLKit {
     }
   }
   public async signTransaction(transaction: any) {
+    //method for handling signing transaction
     let walletType = this.selectedWallet;
     switch (walletType) {
       case EsupportedWallet.WALLETCONNECT:
         let topic = this.Session.topic;
         let formateTx = { ...transaction, topic };
-        // IWallectConnectRequestParams
         return await signWalletConnectTx(formateTx, this.Client);
 
       case EsupportedWallet.XUMM:
         return await signedXummTransaction(this.Client, transaction);
 
       case EsupportedWallet.GEM:
-        // return;
         //transaction can be any valid tx
-        return await signGemTransaction(transaction, this.Client);
+        return await signGemTransaction(transaction);
 
       default:
         throw new Error("the wallet type you selected is not supported ");
@@ -188,7 +196,6 @@ export class XRPLKit {
   }
 }
 
-
 //TODOs
-// refactor for switch cases
+// refactor for switch cases - use dynamic import
 // formatting transaction
