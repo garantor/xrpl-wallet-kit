@@ -16,7 +16,6 @@ import {
 } from "@gemwallet/api";
 import { SessionTypes } from "@walletconnect/types";
 
-
 //networks types supported by the kt
 export enum Networks {
   MAINNET = "MAINNET",
@@ -31,7 +30,6 @@ export enum EsupportedWallet {
   GEM = "GEMWallet",
   WALLETCONNECT = "WalletConnect",
 }
-
 
 //network configuration
 export const EsupportedNetworks = {
@@ -67,7 +65,6 @@ export class XRPLKit {
     this.addWallet(selectedWallet);
     this.addNetwork(network);
   }
-
 
   public addNetwork(network: Networks): void {
     //utility method for adding and updating network

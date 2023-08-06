@@ -58,7 +58,7 @@ Once you have called the ```connectKitToWallet``` method, the wallet will be con
 
 ## Signing transaction
 
-To request a wallet to sign a transaction, you can call the signTransaction method of the class, passing in the transaction you want to sign. The format of the transaction may vary depending on the wallet. 
+The transaction format for most wallets on the Kit follows the standard XRP Ledger transaction format, with the exception of Wallet Connect. When using Wallet Connect, you are required to specify the desired method type. To learn more about Wallet Connect on XRPL, you can visit this [link](https://docs.walletconnect.com/2.0/advanced/rpc-reference/xrpl-rpc). To sign a Wallet Connect transaction using the Kit, you need to provide the following information as shown in the example below.
 
 - To send a walletconnect transaction for signing;
 
@@ -78,32 +78,24 @@ To request a wallet to sign a transaction, you can call the signTransaction meth
 })  
 ```
 
+For signing with other wallets, please provide a standard XRPL transaction.
 
-For Xumm transaction
+- For other wallets,
 
 ```shell
   const client = await client.signTransaction({
-   "txjson":{
       "TransactionType":"Payment",
       "Account":"accounts",
       "Destination":"r4MPsJ8SmQZGzk4dFxEoJHEF886bfX4rhu",
       "Amount":"13000000"
-   }
 }) 
 ```
 
-for Gem wallet payments transaction;
-
-
-```shell
-const client = await client.signTransaction({
-    "destination": "r4MPsJ8SmQZGzk4dFxEoJHEF886bfX4rhu",
-    "amount": "13000000"
-    })
-```
 
 To disconnect or logout from a wallet, simply call the disconnect method of the class.
+
 ```shell
+
 await client.disconnect()
 ```
 
