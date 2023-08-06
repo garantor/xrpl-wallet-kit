@@ -102,4 +102,7 @@ await client.disconnect()
 We will be releasing more documentation on the kit in the near future. I hope this is helpful
 
 
-
+<!-- TODO -->
+<!-- - Update document to include response
+- include possible ways of handling transaction response
+- helper functions from the class -->
