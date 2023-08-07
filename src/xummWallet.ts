@@ -19,9 +19,8 @@ export async function signedXummTransaction(
   transaction: any,
 ): Promise<any | undefined> {
   let signTx = await xummInstance.payload?.createAndSubscribe(transaction);
-  openPopWindow(signTx!.created.next.always);
-  let resolveData = await signTx!.resolve;
-  console.log("THIS IS IS THE PROPERTY OOF RESOLVED ", resolveData);
+  openPopWindow(signTx!.created.next.always, 500, 500);
+
   return signTx;
 }
 
@@ -29,7 +28,17 @@ export async function xummDisconnect(xummInstance: Xumm): Promise<void> {
   return await xummInstance.logout();
 }
 
-export function openPopWindow(url: string) {
+export function openPopWindow(url: string, height: number, width: number) {
+  console.log("thius is is it kit url opener ", url);
+  // Remove the `http://localhost:3000/` part of the URL.
   const absoluteUrl = new URL(url, window.location.href).toString();
-  window.open(absoluteUrl, "Sign Xumm", "height=500, width=500");
+  const newWindow = window.open(
+    absoluteUrl,
+    "Sign Xumm",
+    "height=" + height + ",width=" + width,
+  );
+
+  newWindow!.addEventListener("message", (event) => {
+    console.log(event.data);
+  });
 }
