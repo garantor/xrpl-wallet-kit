@@ -153,7 +153,15 @@ export class XRPLKit {
         return await signWalletConnectTx(formateTx, this.Client);
 
       case EsupportedWallet.XUMM:
-        return await signedXummTransaction(this.Client, transaction);
+        const signedTransaction = await signedXummTransaction(
+          this.Client,
+          transaction,
+        );
+        console.log(
+          "this is the resolved one ",
+          await signedTransaction.resolved(),
+        );
+        return signedTransaction;
 
       case EsupportedWallet.GEM:
         //transaction can be any valid tx
