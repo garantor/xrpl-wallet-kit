@@ -25,8 +25,6 @@ export async function walletConnectInit(
     }
   | undefined
 > {
-  console.log(projectId);
-  console.log(network);
   try {
     let client = await SignClient.init({
       projectId: projectId,
@@ -55,13 +53,11 @@ export async function walletConnectInit(
       // open modal
       web3modal.openModal({ uri });
       let activeSession = await approval();
-      console.log("this is the session  ", activeSession);
       web3modal.closeModal();
 
       return { client, activeSession };
     }
   } catch (error) {
-    console.log("this is the error ", error);
   }
 }
 

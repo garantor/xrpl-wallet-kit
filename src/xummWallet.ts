@@ -5,23 +5,44 @@ export async function xummInit(apiKey: string): Promise<{
   xummClient: Xumm;
   activeSession: ResolvedFlow | Error | undefined;
 }> {
-  console.log("this is the key ", apiKey);
   let xummClient = new Xumm(apiKey);
-  console.log("this is inside the xumm init ", xummClient);
 
   let activeSession = await xummClient.authorize();
-  console.log(activeSession);
   return { xummClient, activeSession };
 }
 
 export async function signedXummTransaction(
   xummInstance: Xumm,
-  transaction: any,
+  transaction: any
 ): Promise<any | undefined> {
   let signTx = await xummInstance.payload?.createAndSubscribe(transaction);
   openPopWindow(signTx!.created.next.always, 500, 500);
+  let wssUrl = signTx?.websocket.url;
+  let resp = await openWssConnection(wssUrl!);
+  return resp;
 
-  return signTx;
+  // return signTx;
+}
+async function openWssConnection(url: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+
+    let wssConnection = new WebSocket(url);
+
+    wssConnection.onmessage = (event) => {
+      const eventData = JSON.parse(event.data); // Parse the JSON data
+
+      if (eventData.signed === true) {
+        resolve(eventData); // Resolve the promise with the received data
+      } else if (eventData.signed === false) {
+        // Handle the case where eventData.signed is false
+        reject(new Error("Transaction signing failed")); // Reject the promise with an error message
+      }
+    };
+
+    wssConnection.onerror = (error) => {
+      reject(error); // Reject the promise in case of an error
+    };
+  });
 }
 
 export async function xummDisconnect(xummInstance: Xumm): Promise<void> {
@@ -29,16 +50,7 @@ export async function xummDisconnect(xummInstance: Xumm): Promise<void> {
 }
 
 export function openPopWindow(url: string, height: number, width: number) {
-  console.log("thius is is it kit url opener ", url);
   // Remove the `http://localhost:3000/` part of the URL.
   const absoluteUrl = new URL(url, window.location.href).toString();
-  const newWindow = window.open(
-    absoluteUrl,
-    "Sign Xumm",
-    "height=" + height + ",width=" + width,
-  );
-
-  newWindow!.addEventListener("message", (event) => {
-    console.log(event.data);
-  });
+  window.open(absoluteUrl, "Sign Xumm", "height=" + height + ",width=" + width);
 }
