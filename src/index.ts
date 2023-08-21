@@ -133,7 +133,6 @@ export class XRPLKit {
         return await gemWalletInit();
       case EsupportedWallet.WALLETCONNECT:
         //walletconnect login here
-        console.log("inside wallet connect ");
 
         let session = await walletConnectInit(projectId!, selectedNetwork);
         this.Session = session?.activeSession;
@@ -153,7 +152,11 @@ export class XRPLKit {
         return await signWalletConnectTx(formateTx, this.Client);
 
       case EsupportedWallet.XUMM:
-        return await signedXummTransaction(this.Client, transaction);
+        const signedTransaction = await signedXummTransaction(
+          this.Client,
+          transaction,
+        );
+        return signedTransaction;
 
       case EsupportedWallet.GEM:
         //transaction can be any valid tx
