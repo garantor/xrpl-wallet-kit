@@ -19,13 +19,18 @@
   "author": "Afo",
   "license": "MIT",
   "dependencies": {
+    "@chakra-ui/react": "^2.8.0",
     "@gemwallet/api": "^3.3.0",
     "@ts-web3modal/standalone": "^2.4.9",
     "@types/node": "^20.4.4",
     "@walletconnect/sign-client": "^2.9.1",
     "@walletconnect/types": "^2.9.1",
+    "react": "^18.2.0",
     "xrpl": "^2.9.1",
     "xrpl-client": "^2.1.0",
     "xumm": "^1.5.4"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.20"
   }
 }

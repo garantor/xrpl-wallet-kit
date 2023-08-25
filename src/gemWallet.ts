@@ -10,6 +10,7 @@ import {
 } from "@gemwallet/api";
 
 import * as XRPL from "xrpl";
+import { XrplClient } from "xrpl-client";
 
 export interface WalletInitResponse {
   isInstalled: boolean;
@@ -17,25 +18,31 @@ export interface WalletInitResponse {
   currentNetwork?: any;
 }
 
-export async function gemWalletInit(): Promise<{
-  isInstalled: () => Promise<IsInstalledResponse>;
-  publicKey: GetAddressResponse;
-  currentNetwork: GetNetworkResponse;
+export async function gemWalletInit(selectedNetwork: any): Promise<{
+  gemClient: XrplClient;
+  activeSession: {
+    isInstalled: () => Promise<IsInstalledResponse>;
+    publicKey: GetAddressResponse;
+    currentNetwork: GetNetworkResponse;
+  };
 }> {
-  let checkInstall = await isInstalled();
-  if (checkInstall) {
-    let address = await getAddress();
-    let network = await getNetwork();
+  const gemClient = new XrplClient(selectedNetwork.networkWss);
+  const checkInstall = await isInstalled();
 
-    let response = {
+  if (checkInstall) {
+    const address = await getAddress();
+    const network = await getNetwork();
+
+    const activeSession = {
       isInstalled: isInstalled,
       publicKey: address,
-      currentNetwork: network, //this is the current network the wallet is connected to
+      currentNetwork: network,
     };
-    return response;
+
+    return { gemClient, activeSession };
   }
 
-  throw new Error("Gem Wallet not install");
+  throw new Error("Gem Wallet is not installed");
 }
 
 export async function signGemTransaction(transaction: XRPL.Transaction) {
@@ -44,3 +51,7 @@ export async function signGemTransaction(transaction: XRPL.Transaction) {
   });
   return signedTx;
 }
+
+// isInstalled: () => Promise<IsInstalledResponse>;
+// publicKey: GetAddressResponse;
+// currentNetwork: GetNetworkResponse;

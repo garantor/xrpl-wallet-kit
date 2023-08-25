@@ -8,12 +8,14 @@ import { xummInit, signedXummTransaction, xummDisconnect } from "./xummWallet";
 import { Xumm } from "xumm";
 import { XrplClient } from "xrpl-client";
 import type { ResolvedFlow } from "xumm-oauth2-pkce";
+import SelectWalletModal from "./modal";
+import React from "react";
 
-import {
-  IsInstalledResponse,
-  GetAddressResponse,
-  GetNetworkResponse,
-} from "@gemwallet/api";
+// import {
+//   IsInstalledResponse,
+//   GetAddressResponse,
+//   GetNetworkResponse,
+// } from "@gemwallet/api";
 import { SessionTypes } from "@walletconnect/types";
 
 //networks types supported by the kt
@@ -91,7 +93,6 @@ export class XRPLKit {
   }
 
   public async connectKitToWallet(
-    //method for connecting to wallets
     projectId?: string,
     apiKey?: string,
   ): Promise<
@@ -100,19 +101,14 @@ export class XRPLKit {
         activeSession: Error | ResolvedFlow | undefined;
       }
     | {
-        isInstalled: () => Promise<IsInstalledResponse>;
-        publicKey: GetAddressResponse;
-        currentNetwork: GetNetworkResponse;
+        gemClient: XrplClient;
+        activeSession: any;
       }
     | {
         client: any;
         activeSession: SessionTypes.Struct;
       }
   > {
-    // connectKitToWallet is how you initially connect to a specific wallet
-    // project id can be any number or string, make sure it valid when connecting to wallet connect
-    // projectId is only for walletconnect
-    // this is where we should set the network
     let useWallet = this.selectedWallet;
     const selectedNetwork =
       EsupportedNetworks[
@@ -121,27 +117,30 @@ export class XRPLKit {
 
     switch (useWallet) {
       case EsupportedWallet.XUMM:
-        //handle xumm connect here
-        let response = await xummInit(apiKey!);
-        this.Session = response.activeSession;
-        this.Client = response.xummClient;
-        return response;
-      case EsupportedWallet.GEM:
-        //handle gem connect here
-        let gemClient = new XrplClient(selectedNetwork.networkWss);
-        this.Client = gemClient;
-        return await gemWalletInit();
-      case EsupportedWallet.WALLETCONNECT:
-        //walletconnect login here
+        // Handle xumm connect here
+        const xummResponse = await xummInit(apiKey!);
+        this.Session = xummResponse.activeSession;
+        this.Client = xummResponse.xummClient;
+        return xummResponse;
 
-        let session = await walletConnectInit(projectId!, selectedNetwork);
-        this.Session = session?.activeSession;
-        this.Client = session?.client;
-        return session!;
+      case EsupportedWallet.GEM:
+        // Handle gem connect here
+        const gemResponse = await gemWalletInit(selectedNetwork.networkWss);
+        this.Client = gemResponse.gemClient;
+        return gemResponse;
+
+      case EsupportedWallet.WALLETCONNECT:
+        // WalletConnect login here
+        const wcSession = await walletConnectInit(projectId!, selectedNetwork);
+        this.Session = wcSession?.activeSession;
+        this.Client = wcSession?.client;
+        return wcSession!;
+
       default:
-        throw new Error("the wallet type you selected is not supported ");
+        throw new Error("The selected wallet type is not supported");
     }
   }
+
   public async signTransaction(transaction: any) {
     //method for handling signing transaction
     let walletType = this.selectedWallet;
@@ -193,6 +192,13 @@ export class XRPLKit {
     return EsupportedNetworks[
       this.network as unknown as keyof typeof EsupportedNetworks
     ];
+  }
+
+  public openModal() {
+    console.log("got inside of the modal ");
+    return React.createElement("SelectWalletModal", {
+      isOpen: true,
+    });
   }
 }
 

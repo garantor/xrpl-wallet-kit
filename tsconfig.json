@@ -15,6 +15,7 @@
       "strict": true,
       "target": "es6",
       "skipLibCheck": true,
+      "allowJs": true,
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/modal.js"]
 }
