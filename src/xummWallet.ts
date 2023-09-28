@@ -13,7 +13,7 @@ export async function xummInit(apiKey: string): Promise<{
 
 export async function signedXummTransaction(
   xummInstance: Xumm,
-  transaction: any
+  transaction: any,
 ): Promise<any | undefined> {
   let signTx = await xummInstance.payload?.createAndSubscribe(transaction);
   openPopWindow(signTx!.created.next.always, 500, 500);
@@ -25,7 +25,6 @@ export async function signedXummTransaction(
 }
 async function openWssConnection(url: string): Promise<any> {
   return new Promise((resolve, reject) => {
-
     let wssConnection = new WebSocket(url);
 
     wssConnection.onmessage = (event) => {

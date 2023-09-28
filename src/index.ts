@@ -6,7 +6,6 @@ import {
 } from "./walletconnect";
 import { xummInit, signedXummTransaction, xummDisconnect } from "./xummWallet";
 import { Xumm } from "xumm";
-import { XrplClient } from "xrpl-client";
 import type { ResolvedFlow } from "xumm-oauth2-pkce";
 
 import {
@@ -15,7 +14,7 @@ import {
   GetNetworkResponse,
 } from "@gemwallet/api";
 import { SessionTypes } from "@walletconnect/types";
-
+import { XrplInstance } from "./utils";
 //networks types supported by the kt
 export enum Networks {
   MAINNET = "MAINNET",
@@ -128,9 +127,10 @@ export class XRPLKit {
         return response;
       case EsupportedWallet.GEM:
         //handle gem connect here
-        let gemClient = new XrplClient(selectedNetwork.networkWss);
+        let gemClient = XrplInstance(selectedNetwork.networkWss);
         this.Client = gemClient;
-        return await gemWalletInit();
+        let GClient = await gemWalletInit();
+        return GClient;
       case EsupportedWallet.WALLETCONNECT:
         //walletconnect login here
 

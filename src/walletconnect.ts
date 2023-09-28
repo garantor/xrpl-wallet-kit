@@ -57,8 +57,7 @@ export async function walletConnectInit(
 
       return { client, activeSession };
     }
-  } catch (error) {
-  }
+  } catch (error) {}
 }
 
 export async function signWalletConnectTx(
