@@ -4,17 +4,6 @@ A toolkit for interacting with all Xrpl wallets using a single, simple API. This
 
 The toolkit provides a unified interface for creating, accessing, and managing Xrpl transaction using wallets. The toolkit is easy to use and can be integrated into any application that needs to interact with Xrpl wallets. It is also open source, so developers can contribute to its development and make it even better.
 
-
-
-
-Here is a short demo of the kit
-
-<video src="kit_video.mp4" controls="controls" style="max-width: 730px;">
-</video>
-
-
-
-
 ## Installation 
  ```shell
  npm i xrpl-wallet-kit
@@ -91,6 +80,81 @@ For signing with other wallets, please provide a standard XRPL transaction.
 }) 
 ```
 
+When using the xrpl-wallet-kit with `create-react-app` you will need to follow these steps below;
+
+
+1. Installation of dependencies: 
+```shell
+   npm install --save-dev \
+    assert \
+    buffer \
+    crypto-browserify \
+    https-browserify \
+    os-browserify \
+    process \
+    stream-browserify \
+    stream-http \
+    url \
+    browserify-zlib
+```
+2. Modify or create webpack configuration
+   i. Install `react-app-rewired`
+      ```shell
+      npm install --save-dev react-app-rewired
+      ```
+   ii. Setup a config file in the root of your project `config-overrides.js` and add the following;
+   ```shell
+               const { ProvidePlugin } = require('webpack');
+               module.exports = function (config, env) {
+                return {
+                    ...config,
+                    module: {
+                        ...config.module,
+                        rules: [
+                            ...config.module.rules,
+                            {
+                                test: /\.m?[jt]sx?$/,
+                                enforce: 'pre',
+                                use: ['source-map-loader'],
+                            },
+                            {
+                                test: /\.m?[jt]sx?$/,
+                                resolve: {
+                                    fullySpecified: false,
+                                },
+                            },
+                        ],
+                    },
+                    plugins: [
+                        ...config.plugins,
+                        new ProvidePlugin({
+                            process: 'process/browser',
+                        }),
+                    ],
+                    resolve: {
+                        ...config.resolve,
+                        fallback: {
+                            assert: require.resolve('assert'),
+                            buffer: require.resolve('buffer'),
+                            crypto: require.resolve('crypto-browserify'),
+                            http: require.resolve('stream-http'),
+                            https: require.resolve('https-browserify'),
+                            stream: require.resolve('stream-browserify'),
+                            url: require.resolve('url/'),
+                            zlib: require.resolve('browserify-zlib'),
+                        },
+                    },
+                    ignoreWarnings: [/Failed to parse source map/],
+                };
+            };
+         ```
+3. Update package.json scripts section
+   ```shell
+   "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test"
+    ```
+- 
 
 To disconnect or logout from a wallet, simply call the disconnect method of the class.
 

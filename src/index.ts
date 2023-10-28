@@ -1,3 +1,6 @@
+export * from "./types/constants";
+export * from "./types/enums";
+
 import { gemWalletInit, signGemTransaction } from "./gemWallet";
 import {
   walletConnectInit,
@@ -14,44 +17,11 @@ import {
   GetNetworkResponse,
 } from "@gemwallet/api";
 import { SessionTypes } from "@walletconnect/types";
-import { XrplInstance } from "./utils";
-//networks types supported by the kt
-export enum Networks {
-  MAINNET = "MAINNET",
-  TESTNET = "TESTNET",
-  DEVNET = "DEVNET",
-  AMM = "AMM",
-}
+import { XrplInstance, formatTxResponse } from "./utils";
 
-//wallets supported
-export enum EsupportedWallet {
-  XUMM = "XUMM",
-  GEM = "GEMWallet",
-  WALLETCONNECT = "WalletConnect",
-}
-
-//network configuration
-export const EsupportedNetworks = {
-  MAINNET: {
-    name: "Mainnet",
-    networkWss: "wss://xrplcluster.com",
-    walletconnectId: "xrpl:0",
-    rpc: "https://xrplcluster.com",
-  },
-  TESTNET: {
-    name: "Testnet",
-    networkWss: "wss://s.altnet.rippletest.net:51233/",
-    walletconnectId: "xrpl:1",
-    rpc: "https://testnet.xrpl-labs.com",
-  },
-
-  DEVNET: {
-    name: "Devnet",
-    networkWss: "wss://s.devnet.rippletest.net:51233/",
-    walletconnectId: "xrpl:2",
-    rpc: "https://s.devnet.rippletest.net:51234/",
-  },
-};
+import { EsupportedWallet } from "./types/enums";
+import { Networks } from "./types/enums";
+import { EsupportedNetworks } from "./types/constants";
 
 export class XRPLKit {
   private selectedWallet!: EsupportedWallet;
@@ -75,9 +45,6 @@ export class XRPLKit {
 
     this.network = network;
   }
-  // public getNetwork() {
-  //   return Object.values(this.network);
-  // }
 
   public addWallet(wallet: EsupportedWallet): void {
     //utility method for adding and updating wallet selected by users
@@ -142,25 +109,36 @@ export class XRPLKit {
         throw new Error("the wallet type you selected is not supported ");
     }
   }
-  public async signTransaction(transaction: any) {
+  public async signTransaction(transaction: any): Promise<{
+    hash: string | any;
+  }> {
     //method for handling signing transaction
     let walletType = this.selectedWallet;
     switch (walletType) {
       case EsupportedWallet.WALLETCONNECT:
         let topic = this.Session.topic;
         let formateTx = { ...transaction, topic };
-        return await signWalletConnectTx(formateTx, this.Client);
+        let wcSigned = await signWalletConnectTx(formateTx, this.Client);
+        let wcResp = await formatTxResponse(wcSigned, this.selectedWallet);
+        return wcResp;
 
       case EsupportedWallet.XUMM:
         const signedTransaction = await signedXummTransaction(
           this.Client,
           transaction,
         );
-        return signedTransaction;
+        let resp = await formatTxResponse(
+          signedTransaction,
+          this.selectedWallet,
+        );
+        return resp;
 
       case EsupportedWallet.GEM:
         //transaction can be any valid tx
-        return await signGemTransaction(transaction);
+        let gemSignedTx = await signGemTransaction(transaction);
+
+        let gemResp = await formatTxResponse(gemSignedTx, this.selectedWallet);
+        return gemResp;
 
       default:
         throw new Error("the wallet type you selected is not supported ");
@@ -194,6 +172,7 @@ export class XRPLKit {
       this.network as unknown as keyof typeof EsupportedNetworks
     ];
   }
+
 }
 
 //TODOs
