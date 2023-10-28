@@ -172,7 +172,6 @@ export class XRPLKit {
       this.network as unknown as keyof typeof EsupportedNetworks
     ];
   }
-
 }
 
 //TODOs
