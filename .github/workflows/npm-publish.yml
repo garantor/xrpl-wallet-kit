@@ -18,23 +18,8 @@ jobs:
           node-version: 16
       - run: npm ci
 
-  prettier-format:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - run: npm ci
-      - name: Install Prettier
-        run: npm install --save-dev prettier
-      - name: Format Code with Prettier
-        run: npm run format
-        working-directory: ${{ github.workspace }}
-
   publish-npm:
-    needs: prettier-format  # Wait for the formatting step to complete
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
