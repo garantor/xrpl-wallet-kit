@@ -4,10 +4,10 @@
     "type": "git",
     "url": "https://github.com/garantor/xrpl-wallet-kit"
   },
-  "version": "0.1.27",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "types/cjs/index.d.ts",
+  "version": "0.1.31",
+  "main": "dist/cjs/index",
+  "module": "dist/esm/index",
+  "types": "dist/cjs/index",
   "description": "",
   "scripts": {
     "build": "rm -rf dist/ && prettier --write src/ && npm run build:esm && npm run build:cjs",
